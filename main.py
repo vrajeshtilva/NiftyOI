@@ -12,7 +12,18 @@ def fetch_nifty_option_chain():
     session = requests.Session()
     session.get("https://www.nseindia.com", headers=headers)  # For cookies
     response = session.get(url, headers=headers)
-    data = response.json()
+
+    if response.status_code != 200:
+        print(f"Error: Received status code {response.status_code}")
+        print(response.text)
+        return None
+
+    try:
+        data = response.json()
+    except Exception as e:
+        print("Failed to parse JSON:", e)
+        print("Response text:", response.text)
+        return None
 
     records = data['records']['data']
     underlying_price = data['records']['underlyingValue']
